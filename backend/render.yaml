@@ -1,0 +1,17 @@
+# render.yaml — Configuração de deploy no Render
+# Este arquivo fica na raiz da pasta backend/
+
+services:
+  - type: web
+    name: credito-autonomo-api
+    env: node
+    region: oregon
+    plan: free
+    rootDir: .
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production

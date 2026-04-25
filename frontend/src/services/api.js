@@ -1,0 +1,33 @@
+// src/services/api.js — Comunicação com o backend
+// Em desenvolvimento usa http://localhost:3001
+// Em produção usa REACT_APP_API_URL definida no .env.production
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+
+async function request(path, options = {}) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: { 'Content-Type': 'application/json', ...options.headers },
+    ...options,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Erro na requisição');
+  return data;
+}
+
+// --- Usuários ---
+export const getUsers = () => request('/users');
+export const getUserById = (id) => request(`/users/${id}`);
+export const createUser = (body) => request('/users', { method: 'POST', body: JSON.stringify(body) });
+export const giveConsent = (id, scope) => request(`/users/${id}/consent`, { method: 'PATCH', body: JSON.stringify({ scope }) });
+
+// --- Transações ---
+export const getTransactions = (userId) => request(`/transactions?userId=${userId}`);
+export const addTransaction = (body) => request('/transactions', { method: 'POST', body: JSON.stringify(body) });
+export const simulateTransactions = (userId, dias) => request(`/transactions/simulate/${userId}`, { method: 'POST', body: JSON.stringify({ dias }) });
+
+// --- Crédito ---
+export const getScore = (userId) => request(`/credit/score/${userId}`);
+export const requestCredit = (body) => request('/credit/request', { method: 'POST', body: JSON.stringify(body) });
+export const getCreditRequests = (userId) => request(`/credit/requests/${userId}`);
+export const getLoans = (userId) => request(`/credit/loans/${userId}`);
+export const payInstallment = (loanId) => request(`/credit/loans/${loanId}/pay`, { method: 'POST' });
+export const getDashboard = () => request('/credit/dashboard');
